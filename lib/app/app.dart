@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../core/di/core_di.dart';
+import '../core/theme/app_theme.dart';
+import '../core/theme/theme_manager.dart';
+import '../flavors/app_flavor.dart';
+import 'routes/app_router.dart';
+
+class TravelaApp extends StatelessWidget {
+  const TravelaApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ThemeBloc>(
+          create: (_) => sl<ThemeBloc>()..add(LoadTheme()),
+        ),
+      ],
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (BuildContext context, ThemeState state) {
+          return MaterialApp.router(
+            title: AppFlavorConfig.instance.appName,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
+            themeMode: state.themeMode,
+            routerConfig: AppRouter.router,
+            builder: (final BuildContext context, final Widget? child) {
+              final Widget appChild = child ?? const SizedBox.shrink();
+
+              if (AppFlavorConfig.isDev) {
+                return Banner(
+                  message: 'DEV',
+                  location: BannerLocation.topStart,
+                  color: Colors.green,
+                  child: appChild,
+                );
+              }
+
+              return appChild;
+            },
+          );
+        },
+      ),
+    );
+  }
+}
