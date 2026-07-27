@@ -5,6 +5,6 @@ class AppConstants {
   static const String appversion = '1.0.0';
 
   static const String apiBaseUrl = 'https://search.travela.xyz';
-  static  String locationSearchEndpoint( String query) => '/api/popular-locations?q=$query';
+
 
 }
