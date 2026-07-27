@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/di/core_di.dart';
+import '../../features/dashbaord/presentation/pages/dashbaord_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
   AppRouter._();
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.dashboard,
     routes: [
       GoRoute(
-        path: AppRoutes.login,
-        name: AppRouteNames.login,
+        path: AppRoutes.dashboard,
+        name: AppRouteNames.dashboard,
         builder: (final BuildContext context, final GoRouterState state) {
-          return const HomePage();
+          return const DashbaordPage();
         },
       ),
 
