@@ -1,17 +1,53 @@
-# travela_task
+# Travela - Property Search (Home Task)
 
-A new Flutter project.
+A single-screen Flutter application implementing real-time travel property search over Server-Sent Events (SSE), location autocomplete, and filter controls.
 
-## Getting Started
+## Architecture & Design Decisions
 
-This project is a starting point for a Flutter application.
+The codebase follows Clean Architecture with a **feature-first** structure:
 
-A few resources to get you started if this is your first Flutter project:
+```text
+lib/features/property_search/
+├── data/          # Datasources, DTO models & repository implementations
+├── domain/        # Entities, repository contracts & use cases
+└── presentation/  # BLoc, pages & UI components
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* **State & Data Flow:** Uses `flutter_bloc` for state management and `dartz` (`Either<Failure, T>`) for  error handling across domain boundaries.
+* **Network Layer:** Powered by `dio`. Requests use `CancelToken` to abort stale autocomplete queries and active SSE streams whenever user input changes or the widget disposes.
+* **Sentinel CopyWith Pattern:** To handle setting nullable state properties back to `null` cleanly, a private sentinel object pattern is used across BLoC states.
+
+##  SSE Stream Handling
+
+The search endpoint returns a `text/event-stream`. Instead of waiting for the full HTTP payload to finish, the app parses the incoming byte stream frame-by-frame:
+
+```dart
+body.stream
+  .cast<List<int>>()
+  .transform(utf8.decoder)
+  .transform(const LineSplitter());
+
+```
+
+Frames are transformed into domain events (`meta`, `item`, `done`, `error`). Property cards appear incrementally on the screen as `item` events land without blocking the UI thread.
+
+---
+
+## Flavors
+
+The project supports two flavor entry points:
+
+* **Dev:** `lib/main_development.dart` (Default via `lib/main.dart`)
+* **Prod:** `lib/main_production.dart`
+
+### Commands
+
+```bash
+# Run Development
+flutter run -t lib/main_development.dart
+
+# Run Production
+flutter run -t lib/main_production.dart
+
+```
