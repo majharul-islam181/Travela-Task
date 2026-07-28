@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/dashbaord/presentation/pages/dashbaord_page.dart';
+import '../../features/property_search/presentation/pages/dashbaord_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
