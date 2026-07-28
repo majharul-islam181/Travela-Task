@@ -3,8 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../../flavors/app_flavor.dart';
-import '../../features/property_search/data/datasources/location_remote_data_source.dart';
-import '../../features/property_search/presentation/cubit/location_search_cubit.dart';
+
 import '../network/api_constants.dart';
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
@@ -17,7 +16,6 @@ Future<void> initDependencies() async {
   await _initStorage();
   _initNetwork();
   _initTheme();
-  _initDashboard();
 }
 
 Future<void> _initStorage() async {
@@ -61,11 +59,3 @@ void _initTheme() {
   sl.registerFactory<ThemeBloc>(() => ThemeBloc(sl<LocalStorage>()));
 }
 
-void _initDashboard() {
-  sl.registerLazySingleton<LocationRemoteDataSource>(
-    () => LocationRemoteDataSource(sl<DioClient>()),
-  );
-  sl.registerFactory<LocationSearchCubit>(
-    () => LocationSearchCubit(sl<LocationRemoteDataSource>()),
-  );
-}

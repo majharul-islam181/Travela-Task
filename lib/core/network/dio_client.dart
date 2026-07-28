@@ -26,6 +26,26 @@ class DioClient {
     }
   }
 
+  Future<Response<ResponseBody>> getStream(
+    final String path, {
+    final Map<String, dynamic>? queryParameters,
+    final Options? options,
+    final CancelToken? cancelToken,
+  }) async {
+    try {
+      return await _dio.get<ResponseBody>(
+        path,
+        queryParameters: queryParameters,
+        options: (options ?? Options()).copyWith(
+          responseType: ResponseType.stream,
+        ),
+        cancelToken: cancelToken,
+      );
+    } on DioException catch (e) {
+      throw _parseDioError(e);
+    }
+  }
+
   Future<Response<T>> post<T>(
     final String path, {
     final dynamic data,

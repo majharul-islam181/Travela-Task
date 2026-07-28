@@ -4,32 +4,8 @@ import 'package:equatable/equatable.dart';
 import '../storage/local_storage.dart';
 import '../storage/storage_keys.dart';
 
-abstract class ThemeEvent extends Equatable {
-  const ThemeEvent();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class ThemeChanged extends ThemeEvent {
-  final ThemeMode themeMode;
-
-  const ThemeChanged(this.themeMode);
-
-  @override
-  List<Object?> get props => [themeMode];
-}
-
-class LoadTheme extends ThemeEvent {}
-
-class ThemeState extends Equatable {
-  final ThemeMode themeMode;
-
-  const ThemeState(this.themeMode);
-
-  @override
-  List<Object?> get props => [themeMode];
-}
+part 'theme_event.dart';
+part 'theme_state.dart';
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   final LocalStorage _localStorage;
