@@ -28,6 +28,15 @@ lib/
 * **Network Layer:** Powered by `dio`. Requests use `CancelToken` to abort stale autocomplete queries and active SSE streams whenever user input changes or the widget disposes.
 * **Sentinel CopyWith Pattern:** To handle setting nullable state properties back to `null` cleanly, a private sentinel object pattern is used across BLoC states.
 
+
+### Location Search Debounce & Request Lifecycle
+
+The `LocationSearchBloc` manages location query changes with a 450ms timer debounce to avoid unnecessary network overhead:
+
+* **Debounce Delay:** Timer waits 450ms after the last keypress before dispatching `LocationSearchRequested`.
+* **Cancellation:** Typing a new query, selecting a location, or clearing input immediately cancels the active `Timer` and aborts the in-flight HTTP request via Dio's `CancelToken`.
+* **Cleanup:** When the BLoC closes, all timers and active requests are cleaned up to prevent memory leaks and race conditions.
+
 ##  SSE Stream Handling
 
 The search endpoint returns a `text/event-stream`. Instead of waiting for the full HTTP payload to finish, the app parses the incoming byte stream frame-by-frame:
