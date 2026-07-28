@@ -1,4 +1,4 @@
-# Travela — Property Search (Take-Home Task)
+# Travela - Property Search (Home Task)
 
 A single-screen Flutter application implementing real-time travel property search over Server-Sent Events (SSE), location autocomplete, and filter controls.
 
@@ -20,7 +20,7 @@ lib/
     └── property_search/
         ├── data/             # Datasources, DTO models & repository implementations
         ├── domain/           # Entities, repository contracts & use cases
-        └── presentation/     # BLoC, pages & UI components
+        └── presentation/     # BLoc, pages & UI components
 
 ```
 
@@ -37,9 +37,17 @@ The `LocationSearchBloc` manages location query changes with a 450ms timer debou
 * **Cancellation:** Typing a new query, selecting a location, or clearing input immediately cancels the active `Timer` and aborts the in-flight HTTP request via Dio's `CancelToken`.
 * **Cleanup:** When the BLoC closes, all timers and active requests are cleaned up to prevent memory leaks and race conditions.
 
-##  SSE Stream Handling
+### SSE Stream Lifecycle (`PropertySearchBloc`)
 
-The search endpoint returns a `text/event-stream`. Instead of waiting for the full HTTP payload to finish, the app parses the incoming byte stream frame-by-frame:
+* **Incremental State Updates:** Processes domain stream events (`meta`, `item`, `done`, `error`) and appends property cards (`[...state.properties, property]`) without blocking the UI thread.
+* **Deterministic Cleanup:** Always calls `_cancelActiveStream()` (cancelling both `CancelToken` and `StreamSubscription`) on new searches, cancellations, or BLoC disposal to prevent memory leaks and race conditions.
+* **Internal Event Bridge:** Encapsulates stream emissions into private internal events (`_PropertySearchStreamEventReceived`, `_PropertySearchFailed`) to maintain state mutation safety.
+* **Retry Support:** Caches execution parameters (`lastParams`) to handle network failures gracefully with `PropertySearchRetryRequested`.
+
+
+## SSE Stream Parsing
+
+The search endpoint returns a `text/event-stream`. Instead of waiting for the full HTTP payload to complete, the app processes the incoming byte stream frame-by-frame:
 
 ```dart
 body.stream
@@ -49,9 +57,7 @@ body.stream
 
 ```
 
-Frames are transformed into domain events (`meta`, `item`, `done`, `error`). Property cards appear incrementally on the screen as `item` events land without blocking the UI thread.
-
----
+Incoming frames are converted into domain events (`meta`, `item`, `done`, `error`), rendering properties on-screen instantly as `item` events land.
 
 ## Flavors
 
@@ -68,5 +74,37 @@ flutter run -t lib/main_development.dart
 
 # Run Production
 flutter run -t lib/main_production.dart
-
 ```
+
+---
+
+<p align="center">
+  <img src="assets/screenshots/1.png" width="280" alt="" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/2.png" width="280" alt="" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/3.png" width="280" alt="" />
+    &nbsp;&nbsp;
+  <img src="assets/screenshots/4.png" width="280" alt="" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/5.png" width="280" alt="" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/6.png" width="280" alt="" />
+  
+</p>
+
+--- 
+
+### Travela-Task-Video
+
+<p align="center">
+  <a href="https://youtube.com/shorts/jADvpfVwbUE?si=bVEql8dUbq52o7Cv">
+    <img src="assets/screenshots/1.png" width="300" alt="Watch Demo Short" />
+  </a>
+  <br />
+  <sub> Click here to watch TravelaTask on YouTube Shorts</sub>
+</p>
+
+
+
+
