@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/theme_context.dart';
@@ -28,17 +29,14 @@ class PropertyCard extends StatelessWidget {
             aspectRatio: 16 / 9,
             child: imageUrl == null
                 ? const _PropertyImageFallback()
-                : Image.network(
-                    imageUrl,
+                : CachedNetworkImage(
+                    imageUrl: imageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (final context, final error, final stack) {
-                      return const _PropertyImageFallback();
-                    },
-                    loadingBuilder: (final context, final child, final event) {
-                      if (event == null) {
-                        return child;
-                      }
+                    placeholder: (final context, final url) {
                       return const _PropertyImageLoading();
+                    },
+                    errorWidget: (final context, final url, final error) {
+                      return const _PropertyImageFallback();
                     },
                   ),
           ),
