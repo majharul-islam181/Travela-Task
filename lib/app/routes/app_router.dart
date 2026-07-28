@@ -13,10 +13,9 @@ class AppRouter {
         path: AppRoutes.dashboard,
         name: AppRouteNames.dashboard,
         builder: (final BuildContext context, final GoRouterState state) {
-          return const DashbaordPage();
+          return const DashboardPage();
         },
       ),
-
     ],
     errorBuilder: (final BuildContext context, final GoRouterState state) {
       return const _RouteNotFoundPage();
