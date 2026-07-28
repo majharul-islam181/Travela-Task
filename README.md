@@ -1,16 +1,26 @@
-# Travela - Property Search (Home Task)
+# Travela — Property Search (Take-Home Task)
 
 A single-screen Flutter application implementing real-time travel property search over Server-Sent Events (SSE), location autocomplete, and filter controls.
 
-## Architecture & Design Decisions
+##  Architecture & Design Decisions
 
 The codebase follows Clean Architecture with a **feature-first** structure:
 
 ```text
-lib/features/property_search/
-├── data/          # Datasources, DTO models & repository implementations
-├── domain/        # Entities, repository contracts & use cases
-└── presentation/  # BLoc, pages & UI components
+lib/
+├── app/
+│   └── app_di/
+│       └── app_di.dart       # Master Dependency Injection setup
+├── core/
+│   └── di/
+│       └── core_di.dart      # Core-level registrations (Network, Storage)
+└── features/
+    ├── di/
+    │   └── property_search_di.dart # Feature-specific DI wiring
+    └── property_search/
+        ├── data/             # Datasources, DTO models & repository implementations
+        ├── domain/           # Entities, repository contracts & use cases
+        └── presentation/     # BLoC, pages & UI components
 
 ```
 
